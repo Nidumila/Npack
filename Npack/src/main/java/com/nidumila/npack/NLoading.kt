@@ -18,57 +18,60 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun NLoading(
+    isDisplayed: Boolean,
     modifier: Modifier = Modifier,
     circleSize: Dp = 25.dp,
     circleColor: Color = MaterialTheme.colors.primary,
     spaceBetween: Dp = 10.dp,
     travelDistance: Dp = 20.dp
 ) {
-    val circles = listOf(
-        remember{ Animatable(initialValue = 0f) },
-        remember{ Animatable(initialValue = 0f) },
-        remember{ Animatable(initialValue = 0f) }
-    )
+    if(isDisplayed){
+        val circles = listOf(
+            remember{ Animatable(initialValue = 0f) },
+            remember{ Animatable(initialValue = 0f) },
+            remember{ Animatable(initialValue = 0f) }
+        )
 
-    circles.forEachIndexed{ index, animate ->
-        LaunchedEffect(key1 = animate){
-            delay(index * 100L)
-            animate.animateTo(
-                targetValue = 1f,
-                animationSpec = infiniteRepeatable(
-                    animation = keyframes {
-                        durationMillis = 1200
-                        0.0f at 0 with LinearOutSlowInEasing
-                        1.0f at 300 with LinearOutSlowInEasing
-                        0.0f at 600 with LinearOutSlowInEasing
-                        0.0f at 1200 with LinearOutSlowInEasing
-                    },
-                    repeatMode = RepeatMode.Restart
-                )
-            )
-        }
-    }
-
-    val circleValues =  circles.map { it.value }
-    val distance = with(LocalDensity.current) { travelDistance.toPx()}
-    val lastCircle = circleValues.size - 1
-
-    Row(modifier = modifier){
-        circleValues.forEachIndexed { index, value ->
-            Box(
-                modifier = Modifier
-                    .size(circleSize)
-                    .graphicsLayer {
-                        translationY = -value * distance
-                    }
-                    .background(
-                        color = circleColor,
-                        shape = CircleShape
+        circles.forEachIndexed{ index, animate ->
+            LaunchedEffect(key1 = animate){
+                delay(index * 100L)
+                animate.animateTo(
+                    targetValue = 1f,
+                    animationSpec = infiniteRepeatable(
+                        animation = keyframes {
+                            durationMillis = 1200
+                            0.0f at 0 with LinearOutSlowInEasing
+                            1.0f at 300 with LinearOutSlowInEasing
+                            0.0f at 600 with LinearOutSlowInEasing
+                            0.0f at 1200 with LinearOutSlowInEasing
+                        },
+                        repeatMode = RepeatMode.Restart
                     )
-            )
+                )
+            }
+        }
 
-            if (index != lastCircle){
-                Spacer(modifier = Modifier.width(spaceBetween))
+        val circleValues =  circles.map { it.value }
+        val distance = with(LocalDensity.current) { travelDistance.toPx()}
+        val lastCircle = circleValues.size - 1
+
+        Row(modifier = modifier){
+            circleValues.forEachIndexed { index, value ->
+                Box(
+                    modifier = Modifier
+                        .size(circleSize)
+                        .graphicsLayer {
+                            translationY = -value * distance
+                        }
+                        .background(
+                            color = circleColor,
+                            shape = CircleShape
+                        )
+                )
+
+                if (index != lastCircle){
+                    Spacer(modifier = Modifier.width(spaceBetween))
+                }
             }
         }
     }
